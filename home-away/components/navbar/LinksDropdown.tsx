@@ -37,11 +37,11 @@ function LinksDropdown() {
           </DropdownMenuItem>
         </SignedOut>
         <SignedIn>
-          {links.map((link) => {
+          {links.map(({ href, label }) => {
             return (
-              <DropdownMenuItem key={link.href}>
-                <Link href={link.href} className="capitalize w-full">
-                  {link.label}
+              <DropdownMenuItem key={href}>
+                <Link href={href} className="capitalize w-full">
+                  {label}
                 </Link>
               </DropdownMenuItem>
             );
