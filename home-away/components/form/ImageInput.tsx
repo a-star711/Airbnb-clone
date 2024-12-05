@@ -13,6 +13,8 @@ function ImageInput() {
         name={name}
         type="file"
         required
+        width={100}
+        height={100}
         accept="image/*"
         className="max-w-xs"
       />
