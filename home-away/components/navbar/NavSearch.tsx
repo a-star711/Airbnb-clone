@@ -8,12 +8,36 @@ function NavSearch() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  console.log(searchParams);
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search")?.toString() || ""
+  );
+
+  const handleSearch = useDebouncedCallback((value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 500);
+
+  useEffect(() => {
+    if (!searchParams.get("search")) {
+      setSearchTerm("");
+    }
+  }, [searchParams.get("search")]);
+
   return (
     <Input
       type="text"
       placeholder="find a property..."
       className="max-w-xs dark:bg-muted"
+      onChange={(e) => {
+        setSearchTerm(e.target.value);
+        handleSearch(e.target.value);
+      }}
+      value={searchTerm}
     />
   );
 }
