@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { imageSchema, profileSchema, propertySchema, validateWithZodSchema } from './schemas';
 import { revalidatePath } from 'next/cache';
 import { uploadImage } from './supabase';
+import middleware from '@/middleware';
 
 
 
@@ -27,13 +28,15 @@ export const getAuthUser = async() =>{
 
 // Render Error Function - helper
 
-export const renderError = (error: unknown): { message: string } => {
-  console.log(error);
+export const renderError = async (
+  error: unknown
+): Promise<{ message: string }> => {
+  console.log(error); // Log the error for debugging
+
   return {
     message: error instanceof Error ? error.message : 'An error occurred',
   };
 };
-
 
 // Create new user and add metaData hasProfile true
 
@@ -108,7 +111,6 @@ export const fetchProfile = async () => {
 
   return profile;
 };
-
 
 
 // Update user Profile
@@ -222,4 +224,20 @@ export const fetchProperties = async ({
     }
   });
   return properties;
+};
+
+
+export const fetchFavoriteId = async ({propertyId}:{propertyId:string}) => {
+  const user = await getAuthUser()
+  const favorite = await db.favorite.findFirst({
+    where:{
+      propertyId,
+      profileId: user.id,
+    },
+    select:{
+      id: true
+    }
+  });
+  return favorite?.id || null
+
 };
